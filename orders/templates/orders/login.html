@@ -1,0 +1,36 @@
+{% extends "orders/base.html" %}
+{% block body %}
+<br>
+  <h1 class="m-3 mb-4">Login to your Account</h1>
+  {% if message %}
+    <div class="ml-4">
+      {{ message }}
+    </div>
+  {% endif %}
+  <br>
+  <form class="ml-3" action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col">
+        <input class="form-control" type="text" name="username" placeholder="Username"/>
+        <br>
+      </div>
+    <br>
+      <div class="col">
+        <input class="form-control" type="password" name="password" placeholder="Password"/>
+        <br>
+      </div>
+      <br>
+      <div class="col">
+        <input class="btn btn-danger mb-2" type="submit" name="login" value="Login"/>
+      </div>
+    </div>
+    <div class="">
+      <div class="col">
+        <p>Don't have an account yet?
+          <a class="btn btn-danger btn-lg ml-2" href="{% url 'register' %}">Register Now</a>
+        </p>
+      </div>
+    </div>
+  </form>
+{% endblock %}

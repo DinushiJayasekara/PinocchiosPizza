@@ -1,0 +1,61 @@
+{% extends "orders/base.html" %}
+{% block body %}
+  <br>
+  <h1 class="m-3 mb-4">Register</h1>
+  <form class="m-3" action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col">
+        <input class="form-control" type="text" name="username" placeholder="Username"/>
+        <br>
+      </div>
+      <br>
+      <div class="col"></div><br>
+      <div class="col"></div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <input class="form-control" type="password" name="password" placeholder="Password"/>
+        <br>
+      </div>
+      <div class="col"></div><br>
+      <div class="col"></div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <input class="form-control" type="text" name="firstname" placeholder="First Name"/>
+        <br>
+      </div>
+      <div class="col"></div><br>
+      <div class="col"></div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <input class="form-control" type="text" name="lastname" placeholder="Last Name"/>
+        <br>
+      </div>
+      <div class="col"></div><br>
+      <div class="col"></div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <input class="form-control" type="email" name="email" placeholder="Email"/>
+        <br>
+      </div>
+      <div class="col"></div><br>
+      <div class="col"></div>
+    </div>
+    <br>
+    <input class="btn btn-danger btn-lg" type="submit" name="register" value="Register Now"/>
+    <br>
+    <p>
+      <br>
+      If you already have an account,
+      <a class="btn btn-danger" href="{% url 'logout' %}">Login</a>
+    </p>
+  </form>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    {% load static %}
+    <meta charset="utf-8">
+    <title>Pinocchio's Pizza & Subs</title>
+    <link rel="shortcut icon" type="image/png" href="https://www.pngrepo.com/download/267186/pinocchio.png"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <link rel="stylesheet" href="{% static 'orders/styles.css' %}" type="text/css">
+  </head>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-danger">
+      <a class="navbar-brand text-monospace text-uppercase" href="#">
+        Pinocchio's Pizza & Subs
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <a class="btn btn-light mr-4" href="{% url 'logout' %}">Logout</a>
+        </form>
+      </div>
+      </nav>
+  </header>
+
+    {% block body %}
+
+    {% endblock %}
+</html>

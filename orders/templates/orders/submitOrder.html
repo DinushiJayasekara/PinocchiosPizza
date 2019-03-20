@@ -1,0 +1,59 @@
+{% extends "orders/base.html" %}
+{% block body %}
+  {% csrf_token %}
+  <h1>You ordered:</h1>
+  <br>
+  <ul id="listOrders">
+  </ul>
+
+  {% for option in Order %}
+    <script type="text/javascript">
+      var current_user = "{{ user.username }}";
+      var username = "{{ option.username }}";
+      var size = "{{ option.size }}";
+      var quantity = "{{ option.quantity }}";
+      var type = "{{ option.type }}";
+      var extra = "{{ option.extra }}";
+      var smallprice = "{{ option.smallprice }}"
+      var largeprice = "{{ option.largeprice }}"
+      var price = "{{ option.price }}"
+      if (current_user == username) {
+        if (size === "1") {
+            if (extra == "[&#39;With Extra Cheese&#39;]") {
+              price = (smallprice * quantity + (0.50 * quantity)).toFixed(2)
+              extra = " with Extra Cheese"
+            }else if (extra == "[]"){
+              price = (smallprice * quantity).toFixed(2)
+              extra = ""
+            }
+            const li = document.createElement('li');
+            li.innerHTML = quantity + " Small " + type + extra + "<br>Price: $" + price;
+            document.querySelector('#listOrders').append(li);
+        }else if (size === "2") {
+          price = (largeprice * quantity).toFixed(2)
+            if (extra == "[&#39;With Extra Cheese&#39;]") {
+              price = (largeprice * quantity + (0.50 * quantity)).toFixed(2)
+              extra = " with Extra Cheese"
+            }else if (extra == "[]"){
+              price = (largeprice * quantity).toFixed(2)
+              extra = ""
+            }
+            const li = document.createElement('li');
+            li.innerHTML = quantity + " Large " + type + extra + "<br>Price: $" + price;
+            document.querySelector('#listOrders').append(li);
+        }else{
+            if (extra == "[&#39;With Extra Cheese&#39;]") {
+              price = (price * quantity).toFixed(2)
+              extra = " with Extra Cheese"
+            }else if (extra == "[]"){
+              price = (price * quantity).toFixed(2)
+              extra = ""
+            }
+            const li = document.createElement('li');
+            li.innerHTML = quantity + " " + type + extra + "<br>Price: $" + price;
+            document.querySelector('#listOrders').append(li);
+        };
+      };
+    </script>
+  {% endfor %}
+{% endblock %}

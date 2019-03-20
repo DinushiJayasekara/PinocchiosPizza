@@ -1,0 +1,996 @@
+{% extends "orders/base.html" %}
+{% block body %}
+<body id="menuBody">
+    <br>
+    <h1 class="text-center mt-4">Hello {{ user.username }}, Welcome to Pinocchio's Pizza & Subs!!!</h1>
+    <br>
+    <p class="ml-3">
+      Your cart may still have items items saved from your last shopping experience. <a href="{% url 'finalOrder' %}">Empty your cart</a> to prevent last time's items being added to your cart again.
+    </p>
+    <a id="manage" class="btn btn-outline-light text-center btn-lg ml-4" href="{% url 'viewOrder' %}" role="button"><i class="fas fa-grin-stars"></i> View All Orders</a>
+    <script type="text/javascript">
+      var staffStatus = "{{ request.user.is_staff }}"
+      console.log(staffStatus)
+      if (staffStatus === "True") {
+        document.querySelector("#manage").style.visibility = "visible"
+      }else{
+        document.querySelector("#manage").style.display = "none"
+      }
+    </script>
+    <a class="btn btn-outline-light text-center btn-lg ml-4" href="{% url 'finalOrder' %}" role="button"><i class="fas fa-shopping-cart"></i> Go to Cart</a>
+    <br>
+    <br><div class="row" id="all">
+      <div class="col-sm text-justify" id="left"><br>
+        <h1 class="text-center">Menu</h1>
+        <br>
+        <form class="" action="{% url 'submitOrder' %}" method="post" id="submitForm">
+          {% csrf_token %}
+          <ul>
+          <li><h2>Regular Pizza</h2><br></li>
+            <ul id="noBullets">
+              {% for option in Menu_Regular_Pizza %}
+                <li><h4 name="">{{ option.name }}</h4></li>
+                <li>Small: ${{ option.small }} / Large: ${{ option.large }}
+                  <button type="button" class="btn btn-danger" id="" data-toggle="modal" data-target="#{{ option.idname }}"><i class="fas fa-pizza-slice"></i> Customize</button>
+                </li>
+                <br>
+                <!-- Modal1 RPizza-->
+                <div style="color:black;" class="modal fade" id="cheese" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Regular Cheese Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Regular Cheese Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="12.20">
+                          <input type="hidden" name="orderlargeprice" value="17.45">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="reg1size" onchange="reg1();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="reg1quantity" class="form-control" min="1" onchange="reg1();">
+                            </div>
+                            <div class="col">
+                              <h5 id="reg1price"><label for="">Price: </label> ${{ reg1.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="reg1add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function reg1add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function reg1() {
+                          var size = document.querySelector("#reg1size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#reg1quantity").value;
+                          if (sizeChange === "Large") {
+                            document.querySelector("#reg1price").innerHTML = "Price: $" + ("{{ reg1.large }}" * quantity).toFixed(2) ;
+                          }else{
+                            document.querySelector("#reg1price").innerHTML = "Price: $" + ("{{ reg1.small }}" * quantity).toFixed(2);
+                          };
+                        }
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Modal2 RPizza-->
+                <div style="color:black;" class="modal fade" id="onetopping" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" name="form_name" id="form_name">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Regular 1 Topping Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Regular 1 Topping Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="13.20">
+                          <input type="hidden" name="orderlargeprice" value="19.45">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="reg2size" onchange="reg2();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any Topping:</label></h5>
+                              {% for option in Menu_Topping %}
+
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="reg2check" value="{{ option.name }}" class="custom-control-input" id="reg2{{ option.id }}">
+                                  <label class="custom-control-label" for="reg2{{ option.id }}">{{ option.name }}</label>
+                                </div>
+
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="reg2quantity" class="form-control" min="1" onchange="reg2();">
+                            </div>
+                            <div class="col">
+                              <h5 id="reg2price"><label for="">Price: $</label>{{ reg2.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="reg2add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function reg2add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function reg2() {
+                          var size = document.querySelector("#reg2size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#reg2quantity").value;
+                          console.log()
+                          if (sizeChange === "Large") {
+                            document.querySelector("#reg2price").innerHTML = "Price: $" + ("{{ reg2.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#reg2price").innerHTML = "Price: $" + ("{{ reg2.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='reg2check']").change(function() {
+                        var reg2limit = $("input[name='reg2check']:checked").length >= 1;
+                        $("input[name='reg2check']").not(":checked").attr("disabled",reg2limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal3 RPizza-->
+                <div style="color:black;" class="modal fade" id="twotoppings" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Regular 2 Toppings Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Regular 2 Toppings Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="14.70">
+                          <input type="hidden" name="orderlargeprice" value="21.45">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="reg3size" onchange="reg3();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any 2 Toppings:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="reg3check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="reg3{{ option.id }}">
+                                  <label class="custom-control-label" for="reg3{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="reg3quantity" class="form-control" min="1" onchange="reg3();">
+                            </div>
+                            <div class="col">
+                              <h5 id="reg3price"><label for="">Price: </label> ${{ reg3.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="reg3add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function reg3add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function reg3() {
+                          var size = document.querySelector("#reg3size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#reg3quantity").value;
+                          console.log()
+                          if (sizeChange === "Large") {
+                            document.querySelector("#reg3price").innerHTML = "Price: $" + ("{{ reg3.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#reg3price").innerHTML = "Price: $" + ("{{ reg3.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='reg3check']").change(function() {
+                        var reg3limit = $("input[name='reg3check']:checked").length >= 2;
+                        $("input[name='reg3check']").not(":checked").attr("disabled",reg3limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal4 RPizza-->
+                <div style="color:black;" class="modal fade" id="threetoppings" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Regular 3 Toppings Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Regular 3 Toppings Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="15.70">
+                          <input type="hidden" name="orderlargeprice" value="23.45">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="reg4size" onchange="reg4();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any 3 Toppings:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="reg4check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="reg4{{ option.id }}">
+                                  <label class="custom-control-label" for="reg4{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="reg4quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="reg4quantity" class="form-control" min="1" onchange="reg4();">
+                            </div>
+                            <div class="col">
+                              <h5 id="reg4price"><label for="">Price: </label> ${{ reg4.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="reg4add()"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function reg4add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function reg4() {
+                          var size = document.querySelector("#reg4size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#reg4quantity").value;
+                          console.log()
+                          if (sizeChange === "Large") {
+                            document.querySelector("#reg4price").innerHTML = "Price: $" + ("{{ reg4.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#reg4price").innerHTML = "Price: $" + ("{{ reg4.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='reg4check']").change(function() {
+                        var reg4limit = $("input[name='reg4check']:checked").length >= 3;
+                        $("input[name='reg4check']").not(":checked").attr("disabled",reg4limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal5 RPizza-->
+                <div style="color:black;" class="modal fade" id="special" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Regular Special Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Regular Special Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="17.25">
+                          <input type="hidden" name="orderlargeprice" value="25.45">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="reg5size" onchange="reg5();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any 5 Toppings:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="reg5check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="reg5{{ option.id }}">
+                                  <label class="custom-control-label" for="reg5{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="reg5quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="reg5quantity" class="form-control" min="1" onchange="reg5();">
+                            </div>
+                            <div class="col">
+                              <h5 id="reg5price"><label for="">Price: </label> ${{ reg5.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="reg5add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function reg5add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function reg5() {
+                          var size = document.querySelector("#reg5size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#reg5quantity").value;
+                          console.log()
+                          if (sizeChange === "Large") {
+                            document.querySelector("#reg5price").innerHTML = "Price: $" + ("{{ reg5.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#reg5price").innerHTML = "Price: $" + ("{{ reg5.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='reg5check']").change(function() {
+                        var reg5limit = $("input[name='reg5check']:checked").length >= 5;
+                        $("input[name='reg5check']").not(":checked").attr("disabled",reg5limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+                <br>
+            </ul>
+
+            <li><h2>Sicilian Pizza</h2></li>
+            <ul id="noBullets">
+              {% for option in Menu_Sicilian_Pizza %}
+                <li><h4>{{ option.name }}</h4></li>
+                <li>Small: ${{ option.small }} / Large: ${{ option.large }}
+                  <button type="button" class="btn btn-danger" id="" data-toggle="modal" data-target="#{{ option.idname }}"><i class="fas fa-pizza-slice"></i> Customize</button>
+                </li>
+                <br>
+                <!-- Modal1 SPizza-->
+                <div style="color:black;" class="modal fade" id="sicCheese" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Sicilian Cheese Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Sicilian Cheese Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="23.45">
+                          <input type="hidden" name="orderlargeprice" value="37.70">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="sic1size" onchange="sic1();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="sic1quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="sic1quantity" class="form-control" min="1" onchange="sic1();">
+                            </div>
+                            <div class="col">
+                              <h5 id="sic1price"><label for="">Price: </label> ${{ sic1.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="sic1add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function sic1add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function sic1() {
+                          var size = document.querySelector("#sic1size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#sic1quantity").value;
+                          if (sizeChange === "Large") {
+                            document.querySelector("#sic1price").innerHTML = "Price: $" + ("{{ sic1.large }}" * quantity).toFixed(2) ;
+                          }else{
+                            document.querySelector("#sic1price").innerHTML = "Price: $" + ("{{ sic1.small }}" * quantity).toFixed(2);
+                          };
+                        }
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal2 SPizza-->
+                <div style="color:black;" class="modal fade" id="oneitem" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Sicilian 1 Item Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Sicilian 1 Item Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="25.45">
+                          <input type="hidden" name="orderlargeprice" value="39.70">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="sic2size" onchange="sic2();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any Topping:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="sic2check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="sic2{{ option.id }}">
+                                  <label class="custom-control-label" for="sic2{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="sic2quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="sic2quantity" class="form-control" min="1" onchange="sic2();">
+                            </div>
+                            <div class="col">
+                              <h5 id="sic2price"><label for="">Price: </label> ${{ sic2.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="sic2add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function sic2add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function sic2() {
+                          var size = document.querySelector("#sic2size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#sic2quantity").value;
+                          console.log()
+                          if (sizeChange === "Large") {
+                            document.querySelector("#sic2price").innerHTML = "Price: $" + ("{{ sic2.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#sic2price").innerHTML = "Price: $" + ("{{ sic2.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='sic2check']").change(function() {
+                        var sic2limit = $("input[name='sic2check']:checked").length >= 1;
+                        $("input[name='sic2check']").not(":checked").attr("disabled",sic2limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal3 SPizza-->
+                <div style="color:black;" class="modal fade" id="twoitems" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Sicilian 2 Items Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Sicilian 2 Items Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="27.45">
+                          <input type="hidden" name="orderlargeprice" value="41.70">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="sic3size" onchange="sic3();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any 2 Toppings:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="sic3check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="sic3{{ option.id }}">
+                                  <label class="custom-control-label" for="sic3{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="sic3quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="sic3quantity" class="form-control" min="1" onchange="sic3();">
+                            </div>
+                            <div class="col">
+                              <h5 id="sic3price"><label for="">Price: </label> ${{ sic3.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="sic3add()"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function sic3add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function sic3() {
+                          var size = document.querySelector("#sic3size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#sic3quantity").value;
+                          console.log()
+                          if (sizeChange === "Large") {
+                            document.querySelector("#sic3price").innerHTML = "Price: $" + ("{{ sic3.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#sic3price").innerHTML = "Price: $" + ("{{ sic3.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='sic3check']").change(function() {
+                        var sic3limit = $("input[name='sic3check']:checked").length >= 2;
+                        $("input[name='sic3check']").not(":checked").attr("disabled",sic3limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal4 SPizza-->
+                <div style="color:black;" class="modal fade" id="threeitems" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Sicilian 3 Items Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Sicilian 3 Items Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="28.45">
+                          <input type="hidden" name="orderlargeprice" value="43.70">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="sic4size" onchange="sic4();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any 3 Toppings:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="sic4check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="sic4{{ option.id }}">
+                                  <label class="custom-control-label" for="sic4{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="sic4quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="sic4quantity" class="form-control" min="1" onchange="sic4();">
+                            </div>
+                            <div class="col">
+                              <h5 id="sic4price"><label for="">Price: </label> ${{ sic4.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="sic4add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function sic4add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function sic4() {
+                          var size = document.querySelector("#sic4size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#sic4quantity").value;
+                          if (sizeChange === "Large") {
+                            document.querySelector("#sic4price").innerHTML = "Price: $" + ("{{ sic4.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#sic4price").innerHTML = "Price: $" + ("{{ sic4.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='sic4check']").change(function() {
+                        var sic4limit = $("input[name='sic4check']:checked").length >= 3;
+                        $("input[name='sic4check']").not(":checked").attr("disabled",sic4limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- Modal5 SPizza-->
+                <div style="color:black;" class="modal fade" id="sicSpecial" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Regular Special Pizza</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="" action="{% url 'submitOrder' %}" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="ordertype" value="Sicilian Special Pizza(s)">
+                          <input type="hidden" name="ordersmallprice" value="29.45">
+                          <input type="hidden" name="orderlargeprice" value="44.70">
+                          <input type="hidden" name="orderprice" value="">
+                          <h5><label for="size">Size:</label></h5>
+                          <select class="form-control" name="ordersize" id="sic5size" onchange="sic5();">
+                            <option value="1">Small</option>
+                            <option value="2">Large</option>
+                          </select>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="toppings">Select any 5 Toppings:</label></h5>
+                              {% for option in Menu_Topping %}
+                                <div class="custom-control custom-checkbox">
+                                  <input type="checkbox" name="sic5check" value="Regular {{ option.name }} Pizza - Small" class="custom-control-input" id="sic5{{ option.id }}">
+                                  <label class="custom-control-label" for="sic5{{ option.id }}">{{ option.name }}</label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col">
+                              <h5><label for="sic5quantity">Quantity:</label></h5>
+                              <input type="number" name="orderquantity" value="1" id="sic5quantity" class="form-control" min="1" onchange="sic5();">
+                            </div>
+                            <div class="col">
+                              <h5 id="sic5price"><label for="">Price: </label> ${{ sic5.small }}</h5>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" onclick="sic5add();"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <script type="text/javascript">
+                              function sic5add() {
+                                alert("Item added to cart successfully!");
+                              };
+                            </script>
+                          </div>
+                        </form>
+                      </div>
+
+                      <script type="text/javascript">
+                        function sic5() {
+                          var size = document.querySelector("#sic5size");
+                          var sizeChange = size.options[size.selectedIndex].text;
+                          var quantity = document.querySelector("#sic5quantity").value;
+                          if (sizeChange === "Large") {
+                            document.querySelector("#sic5price").innerHTML = "Price: $" + ("{{ sic5.large }}" * quantity).toFixed(2);
+                          }else{
+                            document.querySelector("#sic5price").innerHTML = "Price: $" + ("{{ sic5.small }}" * quantity).toFixed(2);
+                          };
+                        };
+
+                        $("input[name='sic5check']").change(function() {
+                        var sic5limit = $("input[name='sic5check']:checked").length >= 5;
+                        $("input[name='sic5check']").not(":checked").attr("disabled",sic5limit);
+                        });
+                      </script>
+
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+                <br>
+            </ul>
+            <li><h2>Subs</h2></li>
+            <ul id="noBullets">
+              {% for option in Menu_Sub %}
+                <li><h4>{{ option.name }}</h4></li>
+                <li>Small: ${{ option.small }} / Large: ${{ option.large }}
+                  <form class="" action="{% url 'submitOrder' %}" method="post">
+                    {% csrf_token %}
+                    <br>
+                    <input type="hidden" name="ordertype" value="{{ option.name }} Sub(s)">
+                    <input type="hidden" name="ordersmallprice" value="{{ option.small }}">
+                    <input type="hidden" name="orderlargeprice" value="{{ option.large }}">
+                    <input type="hidden" name="orderprice" value="">
+                    <div class="row">
+                      <div class="col">
+                        <select class="form-control" name="ordersize" id="size">
+                          <option value="1">Small</option>
+                          <option value="2">Large</option>
+                        </select>
+                        <br>
+                      </div>
+                      <div class="col">
+                        <input type="number" name="orderquantity" value="1" id="pasta1quantity" class="form-control" min="1" onchange="pasta1();">
+                      </div>
+                      <div class="col">
+                        <button type="submit" onclick="subadd();" class="btn btn-danger" id="" data-toggle="modal" data-target="#{{ option.idname }}"><i class="fas fa-cart-plus"></i> Add </button>
+                        <script type="text/javascript">
+                          function subadd() {
+                            alert("Item added to cart successfully!");
+                          };
+                        </script>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <script type="text/javascript">
+                          if ("{{ option.name }}" === "Steak + Cheese") {
+                            document.write(
+                            "{% for option in Menu_Sub_Extra %}" + "<div class='custom-control custom-checkbox'><input type='checkbox' name='extra[]' value='{{ option.name }}' class='custom-control-input' id='{{ option.id }}'><label class='custom-control-label' for='{{ option.id }}'>{{ option.name }}</label></div>" + "{% endfor %}"
+                            );
+                          };
+                        </script>
+                        {% for i in Extra_Cheese %}
+                            <div class="custom-control custom-checkbox">
+                              <input type="checkbox" name="extra[]" value="+ Extra Cheese" class="custom-control-input" id="{{ option.id }} {{ option.small }}">
+                              <label class="custom-control-label" for="{{ option.id }} {{ option.small }}">+ Extra Cheese</label>
+                            </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </form>
+                </li>
+                <br>
+              {% endfor %}
+            </ul>
+
+            <li><h2>Pasta</h2></li>
+            <ul id="noBullets">
+              {% for option in Menu_Pasta %}
+                <li><h4>{{ option.name }}</h4></li>
+                <li>Price: ${{ option.price }}
+                  <form class="" action="{% url 'submitOrder' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="ordertype" value="{{ option.name }}">
+                    <input type="hidden" name="ordersize" value="">
+                    <input type="hidden" name="ordersmallprice" value="">
+                    <input type="hidden" name="orderlargeprice" value="">
+                    <input type="hidden" name="orderprice" value="{{ option.price }}">
+                    <div class="row">
+                      <div class="col">
+                        <input type="number" name="orderquantity" value="1" id="pasta1quantity" class="form-control" min="1" onchange="pasta1();">
+                      </div>
+                      <div class="col">
+                        <button type="submit" onclick="pastaadd();" class="btn btn-danger" id="" data-toggle="modal" data-target="#{{ option.idname }}"><i class="fas fa-cart-plus"></i> Add </button>
+                        <script type="text/javascript">
+                          function pastaadd() {
+                            alert("Item added to cart successfully!");
+                          };
+                        </script>
+                      </div>
+                    </div>
+                    <br>
+                  </form>
+                </li>
+              {% endfor %}
+            </ul>
+
+            <li><h2>Salads</h2></li>
+            <ul id="noBullets">
+              {% for option in Menu_Salad %}
+                <li><h4>{{ option.name }}</h4></li>
+                <li>Price: ${{ option.price }}
+                  <form class="" action="{% url 'submitOrder' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="ordertype" value="{{ option.name }}(s)">
+                    <input type="hidden" name="ordersize" value="">
+                    <input type="hidden" name="ordersmallprice" value="">
+                    <input type="hidden" name="orderlargeprice" value="">
+                    <input type="hidden" name="orderprice" value="{{ option.price }}">
+                    <div class="row">
+                      <div class="col">
+                        <input type="number" name="orderquantity" value="1" id="pasta1quantity" class="form-control" min="1" onchange="pasta1();">
+                      </div>
+                      <div class="col">
+                        <button type="submit" onclick="saladadd();" class="btn btn-danger" id="" data-toggle="modal" data-target="#{{ option.idname }}"><i class="fas fa-cart-plus"></i> Add </button>
+                        <script type="text/javascript">
+                          function saladadd() {
+                            alert("Item added to cart successfully!");
+                          };
+                        </script>
+                      </div>
+                    </div>
+                    <br>
+                  </form>
+                </li>
+                <br>
+              {% endfor %}
+            </ul>
+
+            <li><h2>Dinner Platters</h2></li>
+            <ul id="noBullets">
+              {% for option in Menu_Dinner_Platter %}
+                <li><h4>{{ option.name }}</h4></li>
+                <li>Small: ${{ option.small }} / Large: ${{ option.large }}
+                  <form class="" action="{% url 'submitOrder' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="ordertype" value="{{ option.name }} Platter(s)">
+                    <input type="hidden" name="ordersmallprice" value="{{ option.small }}">
+                    <input type="hidden" name="orderlargeprice" value="{{ option.large }}">
+                    <input type="hidden" name="orderprice" value="">
+                    <div class="row">
+                      <div class="col">
+                        <select class="form-control" name="ordersize" id="size">
+                          <option value="1">Small</option>
+                          <option value="2">Large</option>
+                        </select>
+                        <br>
+                      </div>
+                      <div class="col">
+                        <input type="number" name="orderquantity" value="1" id="pasta1quantity" class="form-control" min="1" onchange="pasta1();">
+                      </div>
+                      <div class="col">
+                        <button type="submit" onclick="dinneradd();" class="btn btn-danger" id="" data-toggle="modal" data-target="#{{ option.idname }}"><i class="fas fa-cart-plus"></i> Add </button>
+                        <script type="text/javascript">
+                          function dinneradd() {
+                            alert("Item added to cart successfully!");
+                          };
+                        </script>
+                      </div>
+                    </div>
+                  </form>
+                </li>
+                <br>
+              {% endfor %}
+            </ul>
+            <br>
+          </ul>
+        </form>
+      </div>
+      <div class="col-sm" id="right"><br>
+        <h1 class="text-center">Toppings for Pizzas</h1>
+        <br>
+          {% csrf_token %}
+          <ul class="text-center" id="noBullets">
+            {% for option in Menu_Topping %}
+              <li>
+                <h5>{{ option.name }}</h5>
+              </li>
+            {% endfor %}
+          </ul>
+      </div>
+
+      <div class="col-sm" id="right"><br>
+        <div class="" id="hide">
+          <h1 class="text-center">Extras for Subs</h1>
+          <br>
+            {% csrf_token %}
+            <ul id="noBullets">
+              {% for option in Extra_Sub1 %}
+                <li>
+                  <h4>{{ option.name }} Sub:</h4>
+                </li>
+                {% for option in Menu_Sub_Extra %}
+                  <li>
+                    {{ option.name }} (Small: ${{ option.small }} / Large: ${{ option.large }})
+                  </li>
+                {% endfor %}
+              {% endfor %}
+              <br>
+              {% for option in Extra_Cheese %}
+                <li>
+                  <h4>{{ option.name }}</h4>
+                  + Extra Cheese (Small: ${{ option.small }} / Large: ${{ option.large }})
+                </li>
+              {% endfor %}
+            </ul>
+        </div>
+      </div>
+    </div>
+</body>
+{% endblock %}

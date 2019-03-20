@@ -1,0 +1,35 @@
+#noBullets{
+  list-style-type: none;
+}
+#all, html, body {
+    height: 100%;
+    color: white;
+}
+#left {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow: scroll;
+}
+#right {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow: scroll;
+}
+
+body{
+  background-image: url("bg.jpg");
+}
+
+#menuBody{
+  background-image: url("bg2.jpg");
+}
+
+#finalOrderBody{
+  background-image: url("bg3.jpg");
+}
+
+#viewOrderBody{
+  background-image: url("bg4.jpg");
+}

@@ -1,0 +1,119 @@
+
+{% extends "orders/base.html" %}
+{% block body %}
+<body id="finalOrderBody">
+  {% csrf_token %}
+  <br>
+  <h1 class="mt-3 ml-4">Your Shopping Cart has:</h1>
+  <br>
+  <p class="ml-4">Your items will be saved even if you go back to add some more.</p>
+  <ul id="listOrders">
+
+  </ul>
+
+  <button id="order" type="button" class="btn btn-outline-danger btn-lg m-3" data-toggle="modal" data-target="#finalOrder"><i class="fas fa-clipboard-check"></i> Order Now</button>
+  <a id="clear" class="btn btn-outline-danger text-center btn-lg" href="{% url 'clearCart' %}" role="button"><i class="fas fa-trash-alt"></i> Clear Cart</a>
+
+    <br>
+    <br>
+    <div style="color:black;" class="modal fade" id="finalOrder" tabindex="-1" role="dialog" aria-labelledby="Title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="Title">Let's Order!</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <br>
+            Your final total is $<span id="total"></span><br>
+            Are you sure you want to go through with this order?<br>
+            <br>
+          </div>
+          <div class="modal-footer">
+            <form class="" action="{% url 'sendMail' %}" method="post">
+              {% csrf_token %}
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No, take me back</button>
+              <button type="submit" class="btn btn-danger" onclick="finalOrder();">Yes, I want to order!</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  <script type="text/javascript">
+    var total = 0;
+  </script>
+  {% for option in Order %}
+    <script type="text/javascript">
+        var current_user = "{{ user.username }}";
+        var username = "{{ option.username }}";
+        var size = "{{ option.size }}";
+        var quantity = "{{ option.quantity }}";
+        var type = "{{ option.type }}";
+        var extra = "{{ option.extra }}";
+        var smallprice = "{{ option.smallprice }}"
+        var largeprice = "{{ option.largeprice }}"
+        var price = "{{ option.price }}"
+        if (current_user == username) {
+          if (size === "1") {
+            count=0;
+            for (var i = 0; i < extra.length; i++) {
+              if (extra[i] === "+") {
+                count+=1
+              };
+            };
+            if (count>0) {
+              price = (smallprice * quantity + (0.50 * count * quantity)).toFixed(2)
+            }else if (count == 0){
+              price = (smallprice * quantity).toFixed(2)
+              extra = ""
+            }
+            total+=parseFloat(price)
+            const li = document.createElement('li');
+            li.innerHTML = quantity + " Small " + type +  " " + extra + "<br>Price: $" + price;
+            document.querySelector('#listOrders').append(li);
+          }else if (size === "2") {
+            count=0;
+            for (var i = 0; i < extra.length; i++) {
+              if (extra[i] === "+") {
+                count+=1
+              };
+            };
+            if (count>0) {
+              price = (largeprice * quantity + (0.50 * count * quantity)).toFixed(2)
+            }else if (count == 0){
+              price = (largeprice * quantity).toFixed(2)
+              extra = ""
+            };
+            total+=parseFloat(price)
+            const li = document.createElement('li');
+            li.innerHTML = quantity + " Large " + type +  " " + extra + "<br>Price: $" + price;
+            document.querySelector('#listOrders').append(li);
+          }else{
+            price = (price * quantity).toFixed(2)
+            total+=parseFloat(price)
+            const li = document.createElement('li');
+            li.innerHTML = quantity + " " + type + "<br>Price: $" + price;
+            document.querySelector('#listOrders').append(li);
+          };
+        };
+        document.querySelector("#total").innerHTML = (total).toFixed(2)
+    </script>
+  {% endfor %}
+  <br>
+  <script type="text/javascript">
+    if (document.querySelector('#listOrders').getElementsByTagName('li').length == 0) {
+      document.querySelector("#order").disabled = true;
+      document.querySelector("#clear").disabled = true;
+      const li = document.createElement('li');
+      li.innerHTML = "NO ITEMS - " +  "<a href='{% url 'index' %}'>Go back to add items to cart</a>";
+      document.querySelector('#listOrders').append(li);
+    }
+    function finalOrder() {
+      alert("Your order was submitted successfully!\nCheck your mail for confirmation.");
+      window.location.reload()
+    }
+  </script>
+</body>
+{% endblock %}
